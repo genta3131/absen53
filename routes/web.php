@@ -29,6 +29,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Input Presensi
         Route::get('/attendance/input', [\App\Http\Controllers\AttendanceController::class, 'create'])->name('attendance.create');
         Route::post('/attendance', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('attendance.store');
+
+        // Tambahan Route Edit Presensi
+        Route::get('/attendance/{attendance}/edit', [\App\Http\Controllers\AttendanceController::class, 'edit'])->name('attendance.edit');
+        Route::put('/attendance/{attendance}', [\App\Http\Controllers\AttendanceController::class, 'update'])->name('attendance.update');
     });
 
     // 3. KHUSUS KEPALA SEKOLAH, STAF TU & GURU MAPEL (Boleh Lihat Laporan)

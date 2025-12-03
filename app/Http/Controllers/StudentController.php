@@ -10,12 +10,33 @@ class StudentController extends Controller
     /**
      * Display the list of students.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        $students = Student::orderBy('nama')->get();
+        $query = Student::query();
+
+        // Filter by Search (Name or NIS)
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('nis', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by Class
+        if ($request->has('kelas') && $request->kelas) {
+            $query->where('kelas', $request->kelas);
+        }
+
+        $students = $query->orderBy('nama')->get();
+
+        // Get unique classes for dropdown
+        $classes = Student::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
 
         return Inertia::render('Students/Index', [
             'students' => $students,
+            'filters' => $request->only(['search', 'kelas']),
+            'classes' => $classes,
         ]);
     }
 
@@ -32,7 +53,19 @@ class StudentController extends Controller
         $validated = $request->validate([
             'nis' => 'required|unique:students|numeric', // NIS harus unik & angka
             'nama' => 'required|string|max:255',
-            'kelas' => 'required|string|max:10',
+            'kelas' => ['required', 'string', 'max:10', function ($attribute, $value, $fail) {
+                // Validasi format kelas: X-1 s/d X-7, XI-1 s/d XI-7, XII-1 s/d XII-7
+                $validClasses = [];
+                foreach (['X', 'XI', 'XII'] as $level) {
+                    for ($i = 1; $i <= 7; $i++) {
+                        $validClasses[] = "$level-$i";
+                    }
+                }
+                
+                if (!in_array($value, $validClasses)) {
+                    $fail("Kelas tidak valid. Pilih antara X-1 s/d XII-7.");
+                }
+            }],
         ]);
 
         // 2. Simpan ke Database
@@ -57,7 +90,19 @@ class StudentController extends Controller
             // Rule unique sedikit beda: NIS boleh sama asalkan milik siswa ini sendiri (ignore id)
             'nis' => 'required|numeric|unique:students,nis,' . $student->id,
             'nama' => 'required|string|max:255',
-            'kelas' => 'required|string|max:10',
+            'kelas' => ['required', 'string', 'max:10', function ($attribute, $value, $fail) {
+                // Validasi format kelas: X-1 s/d X-7, XI-1 s/d XI-7, XII-1 s/d XII-7
+                $validClasses = [];
+                foreach (['X', 'XI', 'XII'] as $level) {
+                    for ($i = 1; $i <= 7; $i++) {
+                        $validClasses[] = "$level-$i";
+                    }
+                }
+                
+                if (!in_array($value, $validClasses)) {
+                    $fail("Kelas tidak valid. Pilih antara X-1 s/d XII-7.");
+                }
+            }],
         ]);
 
         // Update data di database
