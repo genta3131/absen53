@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/app-layout';
 import studentsRoutes from '@/routes/students';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,7 +20,7 @@ export default function Index({ students }) {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div className="flex justify-end mb-6">
                             <Link
-                                href="#"
+                                href={studentsRoutes.create().url}
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 + Tambah Data Siswa
@@ -41,13 +41,32 @@ export default function Index({ students }) {
                                 <tbody>
                                     {students.map((student, index) => (
                                         <tr key={student.id} className="hover:bg-gray-50">
-                                            <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
+                                            <td className="border border-gray-300 px-4 py-2 text-center">{index + 1}</td>
                                             <td className="border border-gray-300 px-4 py-2">{student.nis}</td>
                                             <td className="border border-gray-300 px-4 py-2">{student.nama}</td>
-                                            <td className="border border-gray-300 px-4 py-2">{student.kelas}</td>
+                                            <td className="border border-gray-300 px-4 py-2 text-center">{student.kelas}</td>
                                             <td className="border border-gray-300 px-4 py-2 text-center">
-                                                <button className="text-yellow-500 hover:text-yellow-700 mr-2">Edit</button>
-                                                <button className="text-red-500 hover:text-red-700">Hapus</button>
+                                                
+                                                {/* TOMBOL EDIT */}
+                                                <Link
+                                                    href={`/students/${student.id}/edit`}
+                                                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2"
+                                                >
+                                                    Edit
+                                                </Link>
+
+                                                {/* TOMBOL HAPUS */}
+                                                <button
+                                                    onClick={() => {
+                                                        if (confirm('Yakin ingin menghapus siswa ini? Data presensinya juga akan hilang.')) {
+                                                            router.delete(`/students/${student.id}`);
+                                                        }
+                                                    }}
+                                                    className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-sm"
+                                                >
+                                                    Hapus
+                                                </button>
+                                                
                                             </td>
                                         </tr>
                                     ))}

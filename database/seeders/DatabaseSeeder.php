@@ -14,25 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Guru Piket account
-        User::firstOrCreate(
-            ['email' => 'piket@sekolah.id'],
-            [
-                'name' => 'Pak Budi (Guru Piket)',
-                'password' => Hash::make('password'),
-                'role' => 'guru_piket',
-            ]
-        );
-
-        // Kepala Sekolah account
-        User::firstOrCreate(
-            ['email' => 'kepsek@sekolah.id'],
-            [
-                'name' => 'Ibu Kepsek',
-                'password' => Hash::make('password'),
-                'role' => 'kepsek',
-            ]
-        );
+        // Call UserSeeder untuk membuat user dengan berbagai role
+        $this->call(UserSeeder::class);
 
         // Student seed data
         $students = [
