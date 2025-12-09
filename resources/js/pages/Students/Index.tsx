@@ -1,9 +1,21 @@
 import AppLayout from '@/layouts/app-layout';
 import studentsRoutes from '@/routes/students';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react'; // Import hooks
 import Pagination from '@/components/Pagination';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -13,7 +25,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ students, filters, classes }) { // Receive filters & classes
-    const { flash } = usePage<any>().props; // Get flash messages
+    const { flash, auth } = usePage<any>().props; // Get flash messages and auth
+    const userRole = auth?.user?.role;
     const [search, setSearch] = useState(filters.search || '');
     const [kelas, setKelas] = useState(filters.kelas || '');
 
@@ -77,12 +90,19 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                 </select>
                             </div>
 
-                            <Link
-                                href={studentsRoutes.create().url}
-                                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded"
-                            >
-                                + Tambah Data Siswa
-                            </Link>
+                            <div className="flex gap-2">
+                                {userRole === 'staf_tu' && (
+                                    <>
+                                        <ImportModal />
+                                        <Link
+                                            href={studentsRoutes.create().url}
+                                            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded"
+                                        >
+                                            + Tambah Data Siswa
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
                         </div>
 
                         <div className="overflow-x-auto">
@@ -105,25 +125,29 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                             <td className="border border-border px-4 py-2 text-center text-foreground">{student.kelas}</td>
                                             <td className="border border-border px-4 py-2 text-center">
                                                 
-                                                {/* TOMBOL EDIT */}
-                                                <Link
-                                                    href={`/students/${student.id}/edit`}
-                                                    className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2"
-                                                >
-                                                    Edit
-                                                </Link>
-
-                                                {/* TOMBOL HAPUS */}
-                                                <button
-                                                    onClick={() => {
-                                                        if (confirm('Yakin ingin menghapus siswa ini? Data presensinya juga akan hilang.')) {
-                                                            router.delete(`/students/${student.id}`);
-                                                        }
-                                                    }}
-                                                    className="bg-destructive hover:bg-destructive/90 text-white font-bold py-1 px-3 rounded text-sm"
-                                                >
-                                                    Hapus
-                                                </button>
+                                                {userRole === 'staf_tu' && (
+                                                    <>
+                                                        {/* TOMBOL EDIT */}
+                                                        <Link
+                                                            href={`/students/${student.id}/edit`}
+                                                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2"
+                                                        >
+                                                            Edit
+                                                        </Link>
+        
+                                                        {/* TOMBOL HAPUS */}
+                                                        <button
+                                                            onClick={() => {
+                                                                if (confirm('Yakin ingin menghapus siswa ini? Data presensinya juga akan hilang.')) {
+                                                                    router.delete(`/students/${student.id}`);
+                                                                }
+                                                            }}
+                                                            className="bg-destructive hover:bg-destructive/90 text-white font-bold py-1 px-3 rounded text-sm"
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                    </>
+                                                )}
                                                 
                                             </td>
                                         </tr>
@@ -144,6 +168,65 @@ export default function Index({ students, filters, classes }) { // Receive filte
                 </div>
             </div>
         </AppLayout>
+    );
+}
+
+function ImportModal() {
+    const [open, setOpen] = useState(false);
+    const { data, setData, post, processing, errors, reset } = useForm({
+        file: null as File | null,
+    });
+
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        post('/students/import', {
+            onSuccess: () => {
+                setOpen(false);
+                reset();
+            },
+        });
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" className="bg-green-600 text-white hover:bg-green-700 hover:text-white border-green-600">
+                    Import Excel
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Import Data Siswa</DialogTitle>
+                    <DialogDescription>
+                        Upload file Excel (.xlsx, .xls) dengan kolom: nis, nama, kelas.
+                        <br />
+                        <a href="/students/import/template" className="text-blue-600 hover:underline text-sm">
+                            Download Template Excel
+                        </a>
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={submit} className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="file" className="text-right">
+                            File
+                        </Label>
+                        <Input
+                            id="file"
+                            type="file"
+                            accept=".xlsx, .xls"
+                            className="col-span-3"
+                            onChange={(e) => setData('file', e.target.files ? e.target.files[0] : null)}
+                        />
+                    </div>
+                    {errors.file && <div className="text-red-500 text-sm text-right">{errors.file}</div>}
+                    <DialogFooter>
+                        <Button type="submit" disabled={processing}>
+                            {processing ? 'Mengupload...' : 'Import'}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }
 

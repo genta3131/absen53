@@ -142,7 +142,10 @@ export default function Dashboard({ auth, summary, todaysAttendances, monthlySta
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-2 border-b border-border text-foreground">
-                                                    {attendance.status === 'Terlambat' ? attendance.waktu_masuk : '-'}
+                                                    {attendance.status === 'Terlambat' 
+                                                        ? (attendance.waktu_masuk ? attendance.waktu_masuk.substring(0, 5) : '-') 
+                                                        : (attendance.created_at ? new Date(attendance.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '-')
+                                                    }
                                                 </td>
                                             </tr>
                                         ))

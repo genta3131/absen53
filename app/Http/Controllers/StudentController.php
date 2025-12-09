@@ -122,4 +122,32 @@ class StudentController extends Controller
 
         return redirect()->route('students.index')->with('message', 'Data siswa berhasil dihapus!');
     }
+
+    // IMPORT DATA DARI EXCEL
+    public function import(\Illuminate\Http\Request $request) 
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        try {
+            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\StudentsImport, $request->file('file'));
+            return redirect()->route('students.index')->with('message', 'Data siswa berhasil diimport!');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+             $failures = $e->failures();
+             $errorMessages = [];
+             foreach ($failures as $failure) {
+                 $errorMessages[] = "Baris " . $failure->row() . ": " . implode(', ', $failure->errors());
+             }
+             return redirect()->back()->withErrors(['file' => implode(' | ', $errorMessages)]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['file' => 'Terjadi kesalahan saat import: ' . $e->getMessage()]);
+        }
+    }
+
+    // DOWNLOAD TEMPLATE EXCEL
+    public function downloadTemplate()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\StudentsTemplateExport, 'template_siswa.xlsx');
+    }
 }

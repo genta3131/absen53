@@ -18,13 +18,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // 2. KHUSUS STAF TU & GURU PIKET (Boleh Kelola Data Siswa & Presensi)
     Route::middleware(['role:staf_tu,guru_piket'])->group(function () {
-        // CRUD Siswa
+        // CRUD Siswa - View Only (Boleh staf_tu & guru_piket)
         Route::get('/students', [StudentController::class, 'index'])->name('students.index');
-        Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
-        Route::post('/students', [StudentController::class, 'store'])->name('students.store');
-        Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
-        Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
-        Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+
+        // CRUD Siswa - Full Access (Hanya staf_tu)
+        Route::middleware(['role:staf_tu'])->group(function () {
+            Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+            Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+            Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+            Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+            Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+            Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
+            Route::get('/students/import/template', [StudentController::class, 'downloadTemplate'])->name('students.import.template');
+        });
         
         // Input Presensi
         Route::get('/attendance/input', [\App\Http\Controllers\AttendanceController::class, 'create'])->name('attendance.create');

@@ -49,4 +49,19 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+    /**
+     * Get the attendances recorded by the user.
+     */
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Get the audit trails for the user.
+     */
+    public function auditTrails()
+    {
+        return $this->hasMany(AuditTrail::class);
+    }
 }
