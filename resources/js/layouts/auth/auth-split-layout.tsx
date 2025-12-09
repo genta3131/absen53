@@ -30,7 +30,7 @@ export default function AuthSplitLayout({
                     className="relative z-20 flex items-center text-lg font-medium"
                 >
                     <AppLogoIcon className="mr-2 size-8 fill-current text-white" />
-                    SIMPRES 53
+                    LIGAPRES
                 </Link>
                 {quote && (
                     <div className="relative z-20 mt-auto">

@@ -2,10 +2,23 @@ import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { FormEventHandler, useState, useEffect } from 'react';
 
-export default function Create({ auth, classes, students, selectedClass }: { auth: any, classes: string[], students: any[], selectedClass: string }) {
+interface AttendanceItem {
+    student_id: number;
+    status: string;
+    keterangan: string;
+    waktu_masuk: string;
+}
+
+interface AttendanceForm {
+    date: string;
+    attendances: AttendanceItem[];
+}
+
+export default function Create({ auth, classes, students, selectedClass, selectedDate }: { auth: any, classes: string[], students: any[], selectedClass: string, selectedDate: string }) {
     // State untuk data presensi bulk
-    const { data, setData, post, processing, errors } = useForm({
-        attendances: [] as any[]
+    const { data, setData, post, processing, errors } = useForm<AttendanceForm>({
+        date: selectedDate,
+        attendances: []
     });
 
     // Inisialisasi data form saat students berubah
@@ -20,7 +33,8 @@ export default function Create({ auth, classes, students, selectedClass }: { aut
             }));
             setData('attendances', initialData);
         }
-    }, [students]);
+        setData('date', selectedDate);
+    }, [students, selectedDate]);
 
     // Handle perubahan status/keterangan per siswa
     const handleAttendanceChange = (index: number, field: string, value: any) => {
@@ -32,7 +46,13 @@ export default function Create({ auth, classes, students, selectedClass }: { aut
     // Handle ganti kelas
     const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newClass = e.target.value;
-        router.get('/attendance/input', { kelas: newClass });
+        router.get('/attendance/input', { kelas: newClass, date: selectedDate });
+    };
+
+    // Handle ganti tanggal
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newDate = e.target.value;
+        router.get('/attendance/input', { kelas: selectedClass, date: newDate });
     };
 
     const submit: FormEventHandler = (e) => {
@@ -53,23 +73,36 @@ export default function Create({ auth, classes, students, selectedClass }: { aut
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-card overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-card overflow-hidden shadow-md border border-border sm:rounded-lg p-6">
                         
                         <h3 className="text-lg font-bold mb-6 text-foreground">Input Presensi Harian</h3>
 
-                        {/* PILIH KELAS */}
-                        <div className="mb-6">
-                            <label className="block text-foreground font-bold mb-2">Pilih Kelas:</label>
-                            <select
-                                className="border border-border rounded px-3 py-2 w-full md:w-1/3 bg-background text-foreground"
-                                onChange={handleClassChange}
-                                value={selectedClass || ''}
-                            >
-                                <option value="">-- Pilih Kelas --</option>
-                                {classes.map((cls, idx) => (
-                                    <option key={idx} value={cls}>{cls}</option>
-                                ))}
-                            </select>
+                        {/* PILIH KELAS DAN TANGGAL */}
+                        <div className="mb-6 flex flex-col md:flex-row gap-4">
+                            <div className="w-full md:w-1/3">
+                                <label className="block text-foreground font-bold mb-2">Pilih Kelas:</label>
+                                <select
+                                    className="border border-border rounded px-3 py-2 w-full bg-background text-foreground"
+                                    onChange={handleClassChange}
+                                    value={selectedClass || ''}
+                                >
+                                    <option value="">-- Pilih Kelas --</option>
+                                    {classes.map((cls, idx) => (
+                                        <option key={idx} value={cls}>{cls}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="w-full md:w-1/3">
+                                <label className="block text-foreground font-bold mb-2">Pilih Tanggal:</label>
+                                <input
+                                    type="date"
+                                    className="border border-border rounded px-3 py-2 w-full bg-background text-foreground"
+                                    onChange={handleDateChange}
+                                    value={selectedDate}
+                                    max={new Date().toISOString().split('T')[0]}
+                                />
+                            </div>
                         </div>
 
                         {/* TABEL INPUT BULK */}
@@ -143,7 +176,7 @@ export default function Create({ auth, classes, students, selectedClass }: { aut
                                         disabled={processing}
                                         className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-8 rounded shadow-lg"
                                     >
-                                        Simpan Presensi Kelas {selectedClass}
+                                        Simpan Presensi Kelas {selectedClass} ({selectedDate})
                                     </button>
                                 </div>
                             </form>

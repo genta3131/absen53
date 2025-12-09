@@ -38,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // 3. KHUSUS KEPALA SEKOLAH, STAF TU & GURU MAPEL (Boleh Lihat Laporan)
     Route::middleware(['role:kepsek,staf_tu,guru_mapel'])->group(function () {
         Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/export/excel', [\App\Http\Controllers\ReportController::class, 'exportExcel'])->name('reports.export.excel');
+        Route::get('/reports/export/pdf', [\App\Http\Controllers\ReportController::class, 'exportPdf'])->name('reports.export.pdf');
     });
 
     // 4. KHUSUS STAF TU (Boleh Kelola Akun - SUPER POWER)

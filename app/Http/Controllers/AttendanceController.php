@@ -17,14 +17,15 @@ class AttendanceController extends Controller
         $classes = Student::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
         
         $selectedClass = $request->query('kelas');
+        $selectedDate = $request->query('date', now()->toDateString()); // Default hari ini jika tidak ada
         $students = [];
 
-        // Jika ada kelas yang dipilih, ambil siswanya beserta data presensi hari ini
+        // Jika ada kelas yang dipilih, ambil siswanya beserta data presensi pada tanggal yang dipilih
         if ($selectedClass) {
             $students = Student::where('kelas', $selectedClass)
                 ->orderBy('nama')
-                ->with(['attendances' => function($query) {
-                    $query->whereDate('tanggal', now()->toDateString());
+                ->with(['attendances' => function($query) use ($selectedDate) {
+                    $query->whereDate('tanggal', $selectedDate);
                 }])
                 ->get()
                 ->map(function ($student) {
@@ -38,6 +39,7 @@ class AttendanceController extends Controller
             'classes' => $classes,
             'students' => $students,
             'selectedClass' => $selectedClass,
+            'selectedDate' => $selectedDate,
         ]);
     }
 
@@ -45,6 +47,7 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'date' => 'required|date|before_or_equal:today',
             'attendances' => 'required|array',
             'attendances.*.student_id' => 'required|exists:students,id',
             'attendances.*.status' => 'required|in:Hadir,Sakit,Izin,Alpa,Terlambat',
@@ -52,7 +55,7 @@ class AttendanceController extends Controller
             'attendances.*.waktu_masuk' => 'nullable',
         ]);
 
-        $today = now()->toDateString();
+        $date = $request->date;
         $userId = Auth::id();
 
         foreach ($request->attendances as $data) {
@@ -60,7 +63,7 @@ class AttendanceController extends Controller
             Attendance::updateOrCreate(
                 [
                     'student_id' => $data['student_id'],
-                    'tanggal' => $today,
+                    'tanggal' => $date,
                 ],
                 [
                     'user_id' => $userId,
@@ -70,6 +73,7 @@ class AttendanceController extends Controller
                 ]
             );
         }
+
 
         return redirect()->route('dashboard')->with('message', 'Presensi berhasil dicatat!');
     }
@@ -105,7 +109,7 @@ class AttendanceController extends Controller
             'waktu_masuk' => $request->status === 'Terlambat' ? $request->waktu_masuk : null,
         ]);
 
-        // Catat di Audit Trail (Sesuai PDF Hal 9 Poin 211)
+        // Catat di Audit Trail
         \App\Models\AuditTrail::create([
             'user_id' => Auth::id(),
             'aksi' => 'Koreksi Presensi',

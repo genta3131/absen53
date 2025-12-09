@@ -35,7 +35,7 @@ class DashboardController extends Controller
             ['name' => 'Terlambat', 'jumlah' => Attendance::whereBetween('tanggal', [$startOfMonth, $endOfMonth])->where('status', 'Terlambat')->count()],
         ];
 
-        // 3. DATA BARU: Top 5 Kelas Sering Terlambat Bulan Ini (Sesuai PDF Hal 18)
+        // 3. DATA BARU: Top 5 Kelas Sering Terlambat Bulan Ini
         // Kita perlu join tabel attendances dengan students untuk tahu kelasnya
         $topLateClasses = \Illuminate\Support\Facades\DB::table('attendances')
             ->join('students', 'attendances.student_id', '=', 'students.id')
@@ -47,7 +47,7 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // 4. Riwayat Hari Ini (Kode Lama - Tetap Dipakai)
+        // 4. Riwayat Hari Ini
         $todaysAttendances = Attendance::with('student')
             ->whereDate('tanggal', $today)
             ->latest()

@@ -30,23 +30,23 @@ export default function Dashboard({ auth, summary, todaysAttendances, monthlySta
                     
                     {/* 1. RINGKASAN HARIAN (Sama seperti sebelumnya) */}
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                        <div className="bg-card p-6 border-l-4 border-yellow-500 shadow-sm rounded-lg">
+                        <div className="bg-card p-6 border-l-4 border-yellow-500 shadow-md border border-border rounded-lg">
                             <div className="text-muted-foreground text-sm font-bold">Sakit Hari Ini</div>
                             <div className="text-3xl font-bold text-foreground">{summary.sakit}</div>
                         </div>
-                        <div className="bg-card p-6 border-l-4 border-blue-500 shadow-sm rounded-lg">
+                        <div className="bg-card p-6 border-l-4 border-blue-500 shadow-md border border-border rounded-lg">
                             <div className="text-muted-foreground text-sm font-bold">Izin Hari Ini</div>
                             <div className="text-3xl font-bold text-foreground">{summary.izin}</div>
                         </div>
-                        <div className="bg-card p-6 border-l-4 border-red-500 shadow-sm rounded-lg">
+                        <div className="bg-card p-6 border-l-4 border-red-500 shadow-md border border-border rounded-lg">
                             <div className="text-muted-foreground text-sm font-bold">Alpa Hari Ini</div>
                             <div className="text-3xl font-bold text-foreground">{summary.alpa}</div>
                         </div>
-                        <div className="bg-card p-6 border-l-4 border-orange-500 shadow-sm rounded-lg">
+                        <div className="bg-card p-6 border-l-4 border-orange-500 shadow-md border border-border rounded-lg">
                             <div className="text-muted-foreground text-sm font-bold">Terlambat Hari Ini</div>
                             <div className="text-3xl font-bold text-foreground">{summary.terlambat}</div>
                         </div>
-                        <div className="bg-card p-6 border-l-4 border-gray-800 dark:border-gray-200 shadow-sm rounded-lg">
+                        <div className="bg-card p-6 border-l-4 border-gray-800 dark:border-gray-200 shadow-md border border-border rounded-lg">
                             <div className="text-muted-foreground text-sm font-bold">Total Input</div>
                             <div className="text-3xl font-bold text-foreground">{summary.total}</div>
                         </div>
@@ -111,7 +111,7 @@ export default function Dashboard({ auth, summary, todaysAttendances, monthlySta
                     </div>
 
                     {/* 3. TABEL RIWAYAT INPUT HARI INI */}
-                    <div className="bg-card overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-card overflow-hidden shadow-md border border-border sm:rounded-lg p-6">
                         <h3 className="text-lg font-bold mb-4 text-foreground">Riwayat Input Hari Ini</h3>
                         <div className="overflow-x-auto">
                             <table className="min-w-full table-auto border-collapse">

@@ -27,7 +27,7 @@ export default function Edit({ auth, attendance }: { auth: any, attendance: any 
 
             <div className="py-12">
                 <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-card overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-card overflow-hidden shadow-md border border-border sm:rounded-lg p-6">
                         
                         <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 p-4 rounded border border-blue-200 dark:border-blue-800">
                             <h3 className="font-bold text-lg text-blue-800 dark:text-blue-300">Data Siswa</h3>

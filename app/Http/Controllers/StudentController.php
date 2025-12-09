@@ -28,7 +28,10 @@ class StudentController extends Controller
             $query->where('kelas', $request->kelas);
         }
 
-        $students = $query->orderBy('nama')->get();
+        $students = $query->orderBy('kelas')
+            ->orderBy('nama')
+            ->paginate(10)
+            ->withQueryString();
 
         // Get unique classes for dropdown
         $classes = Student::select('kelas')->distinct()->orderBy('kelas')->pluck('kelas');
@@ -49,7 +52,7 @@ class StudentController extends Controller
     // MENYIMPAN DATA KE DATABASE
     public function store(\Illuminate\Http\Request $request)
     {
-        // 1. Validasi Input (Sesuai PDF Hal 4: Validasi Input Data)
+        // 1. Validasi Input
         $validated = $request->validate([
             'nis' => 'required|unique:students|numeric', // NIS harus unik & angka
             'nama' => 'required|string|max:255',
@@ -72,9 +75,9 @@ class StudentController extends Controller
         Student::create($validated);
 
         // 3. Kembali ke Halaman Index dengan notifikasi (Opsional: Flash message bisa ditambahkan nanti)
-        return redirect()->route('students.index');
+        return redirect()->route('students.index')->with('message', 'Data siswa berhasil ditambahkan!');
     }
-    // MENAMPILKAN HALAMAN EDIT (Sesuai PDF Hal 5)
+    // MENAMPILKAN HALAMAN EDIT
     public function edit(Student $student)
     {
         return Inertia::render('Students/Edit', [
@@ -112,7 +115,7 @@ class StudentController extends Controller
         return redirect()->route('students.index')->with('message', 'Data siswa berhasil diperbarui!');
     }
 
-    // MENGHAPUS DATA (Sesuai PDF Hal 6)
+    // MENGHAPUS DATA
     public function destroy(Student $student)
     {
         $student->delete();

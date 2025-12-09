@@ -1,8 +1,9 @@
 import AppLayout from '@/layouts/app-layout';
 import studentsRoutes from '@/routes/students';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react'; // Import hooks
+import Pagination from '@/components/Pagination';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,6 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Index({ students, filters, classes }) { // Receive filters & classes
+    const { flash } = usePage<any>().props; // Get flash messages
     const [search, setSearch] = useState(filters.search || '');
     const [kelas, setKelas] = useState(filters.kelas || '');
 
@@ -46,7 +48,13 @@ export default function Index({ students, filters, classes }) { // Receive filte
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-card overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    {flash?.message && (
+                        <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                            <strong className="font-bold">Berhasil!</strong>
+                            <span className="block sm:inline"> {flash.message}</span>
+                        </div>
+                    )}
+                    <div className="bg-card overflow-hidden shadow-md border border-border sm:rounded-lg p-6">
                         <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                             {/* SEARCH & FILTER */}
                             <div className="flex gap-4 w-full md:w-auto">
@@ -89,7 +97,7 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {students.map((student, index) => (
+                                    {students.data.map((student, index) => (
                                         <tr key={student.id} className="hover:bg-muted/50">
                                             <td className="border border-border px-4 py-2 text-center text-foreground">{index + 1}</td>
                                             <td className="border border-border px-4 py-2 text-foreground">{student.nis}</td>
@@ -112,7 +120,7 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                                             router.delete(`/students/${student.id}`);
                                                         }
                                                     }}
-                                                    className="bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold py-1 px-3 rounded text-sm"
+                                                    className="bg-destructive hover:bg-destructive/90 text-white font-bold py-1 px-3 rounded text-sm"
                                                 >
                                                     Hapus
                                                 </button>
@@ -121,7 +129,7 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                         </tr>
                                     ))}
 
-                                    {students.length === 0 && (
+                                    {students.data.length === 0 && (
                                         <tr>
                                             <td colSpan="5" className="text-center py-4 text-muted-foreground">
                                                 Belum ada data siswa.
@@ -131,6 +139,7 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                 </tbody>
                             </table>
                         </div>
+                        <Pagination links={students.links} className="mt-6" />
                     </div>
                 </div>
             </div>

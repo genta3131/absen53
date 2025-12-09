@@ -15,7 +15,7 @@ export default function Index({ auth, users }: { auth: any, users: any[] }) {
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-card overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-card overflow-hidden shadow-md border border-border sm:rounded-lg p-6">
 
                         <div className="flex justify-end mb-6">
                             <Link

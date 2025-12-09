@@ -30,7 +30,7 @@ export default function Create({ auth }: { auth: any }) {
 
             <div className="py-12">
                 <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-card overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <div className="bg-card overflow-hidden shadow-md border border-border sm:rounded-lg p-6">
                         
                         <form onSubmit={submit}>
                             {/* Input NIS */}

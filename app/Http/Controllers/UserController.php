@@ -21,7 +21,7 @@ class UserController extends Controller
         ]);
     }
 
-    // FORM TAMBAH PENGGUNA (Sesuai PDF Hal 10)
+    // FORM TAMBAH PENGGUNA
     public function create()
     {
         return Inertia::render('Users/Create');
@@ -47,7 +47,7 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('message', 'Akun pengguna berhasil dibuat!');
     }
 
-    // FORM EDIT PENGGUNA (Sesuai PDF Hal 11)
+    // FORM EDIT PENGGUNA
     public function edit(User $user)
     {
         return Inertia::render('Users/Edit', [
@@ -84,7 +84,7 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('message', 'Akun pengguna diperbarui!');
     }
 
-    // HAPUS PENGGUNA (Sesuai PDF Hal 12)
+    // HAPUS PENGGUNA
     public function destroy(User $user)
     {
         $user->delete();
