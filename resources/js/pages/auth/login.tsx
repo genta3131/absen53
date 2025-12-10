@@ -5,10 +5,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
-import { Form, Head, Link } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react'; // Kept useForm from inertia, removed Link if not used directly or kept if needed. Link IS used in TextLink? No TextLink wraps Link? TextLink imports Link? TextLink href expects string. 
 import AppLogoIcon from '@/components/app-logo-icon';
+import { FormEventHandler } from 'react';
 
 interface LoginProps {
     status?: string;
@@ -21,6 +20,19 @@ export default function Login({
     canResetPassword,
     canRegister,
 }: LoginProps) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        post('/login', {
+            onFinish: () => reset('password'),
+        });
+    };
+
     return (
         <div className="flex min-h-screen w-full">
             <Head title="Masuk" />
@@ -88,82 +100,80 @@ export default function Login({
                         </div>
                     )}
 
-                    <Form
-                        {...store.form()}
-                        resetOnSuccess={['password']}
-                        className="space-y-6"
-                    >
-                        {({ processing, errors }) => (
-                            <>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">Email</Label>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            name="email"
-                                            required
-                                            autoFocus
-                                            tabIndex={1}
-                                            autoComplete="email"
-                                            placeholder="nama@sekolah.sch.id"
-                                            className="h-11 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
-                                        />
-                                        <InputError message={errors.email} />
-                                    </div>
+                    <form onSubmit={submit} className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-slate-700 dark:text-slate-300">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    required
+                                    autoFocus
+                                    tabIndex={1}
+                                    autoComplete="email"
+                                    placeholder="nama@sekolah.sch.id"
+                                    className="h-11 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
+                                    value={data.email}
+                                    onChange={(e) => setData('email', e.target.value)}
+                                />
+                                <InputError message={errors.email} />
+                            </div>
 
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <Label htmlFor="password" className="text-slate-700 dark:text-slate-300">Password</Label>
-                                            {canResetPassword && (
-                                                <TextLink
-                                                    href={request()}
-                                                    className="text-sm font-medium text-blue-600 hover:text-blue-500"
-                                                    tabIndex={5}
-                                                >
-                                                    Lupa password?
-                                                </TextLink>
-                                            )}
-                                        </div>
-                                        <Input
-                                            id="password"
-                                            type="password"
-                                            name="password"
-                                            required
-                                            tabIndex={2}
-                                            autoComplete="current-password"
-                                            placeholder="••••••••"
-                                            className="h-11 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
-                                        />
-                                        <InputError message={errors.password} />
-                                    </div>
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password" className="text-slate-700 dark:text-slate-300">Password</Label>
+                                    {canResetPassword && (
+                                        <TextLink
+                                            href="/forgot-password"
+                                            className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                                            tabIndex={5}
+                                        >
+                                            Lupa password?
+                                        </TextLink>
+                                    )}
                                 </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    required
+                                    tabIndex={2}
+                                    autoComplete="current-password"
+                                    placeholder="••••••••"
+                                    className="h-11 bg-slate-50 border-slate-200 focus:border-blue-500 focus:ring-blue-500/20 transition-all"
+                                    value={data.password}
+                                    onChange={(e) => setData('password', e.target.value)}
+                                />
+                                <InputError message={errors.password} />
+                            </div>
+                        </div>
 
-                                <div className="flex items-center">
-                                    <Checkbox
-                                        id="remember"
-                                        name="remember"
-                                        tabIndex={3}
-                                        className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                                    />
-                                    <Label htmlFor="remember" className="ml-2 text-slate-600 dark:text-slate-400 font-normal cursor-pointer">
-                                        Ingat saya
-                                    </Label>
-                                </div>
+                        <div className="flex items-center">
+                            <Checkbox
+                                id="remember"
+                                name="remember"
+                                tabIndex={3}
+                                className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                checked={data.remember}
+                                onCheckedChange={(checked) => setData('remember', checked)}
+                            />
+                            <Label htmlFor="remember" className="ml-2 text-slate-600 dark:text-slate-400 font-normal cursor-pointer">
+                                Ingat saya
+                            </Label>
+                        </div>
 
-                                <Button
-                                    type="submit"
-                                    className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                    tabIndex={4}
-                                    disabled={processing}
-                                    data-test="login-button"
-                                >
-                                    {processing && <Spinner className="mr-2 text-white" />}
-                                    Masuk
-                                </Button>
-                            </>
-                        )}
-                    </Form>
+                        <Button
+                            type="submit"
+                            className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            tabIndex={4}
+                            disabled={processing}
+                            data-test="login-button"
+                        >
+                            {processing && <Spinner className="mr-2 text-white" />}
+                            Masuk
+                        </Button>
+                    </form>
                     
                     <div className="pt-6 text-center text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800">
                         &copy; {new Date().getFullYear()} SMAN 53 Jakarta. All rights reserved.
@@ -173,3 +183,4 @@ export default function Login({
         </div>
     );
 }
+

@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import studentsRoutes from '@/routes/students';
+
 import { Head, useForm, Link } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
@@ -14,7 +14,7 @@ export default function Create({ auth }: { auth: any }) {
     // Fungsi saat tombol Simpan ditekan
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(studentsRoutes.store().url);
+        post('/students');
     };
 
     return (
@@ -22,7 +22,7 @@ export default function Create({ auth }: { auth: any }) {
             breadcrumbs={[
                 {
                     title: 'Tambah Siswa',
-                    href: studentsRoutes.create().url,
+                    href: '/students/create',
                 },
             ]}
         >
@@ -82,7 +82,7 @@ export default function Create({ auth }: { auth: any }) {
                             {/* Tombol Aksi */}
                             <div className="flex items-center justify-end mt-4">
                                 <Link
-                                    href={studentsRoutes.index().url}
+                                    href="/students"
                                     className="text-muted-foreground hover:text-foreground mr-4"
                                 >
                                     Batal

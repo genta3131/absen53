@@ -10,8 +10,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import studentsRoutes from '@/routes/students';
+
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, ClipboardCheck, FileText, Folder, LayoutGrid, Users } from 'lucide-react';
@@ -28,13 +27,13 @@ export function AppSidebar() {
         // Dashboard - semua role bisa akses
         {
             title: 'Dashboard',
-            href: dashboard(),
+            href: '/dashboard',
             icon: LayoutGrid,
         },
         // Data Siswa - hanya staf_tu dan guru_piket
         ...(userRole === 'staf_tu' || userRole === 'guru_piket' ? [{
             title: 'Data Siswa',
-            href: studentsRoutes.index(),
+            href: '/students',
             icon: Users,
         }] : []),
         // Input Presensi - hanya staf_tu dan guru_piket
@@ -63,7 +62,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

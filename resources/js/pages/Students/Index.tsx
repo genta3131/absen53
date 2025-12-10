@@ -1,8 +1,8 @@
 import AppLayout from '@/layouts/app-layout';
-import studentsRoutes from '@/routes/students';
+
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage, useForm } from '@inertiajs/react';
-import { useState, useEffect } from 'react'; // Import hooks
+import { useState, useEffect } from 'react';
 import Pagination from '@/components/Pagination';
 import {
     Dialog,
@@ -16,26 +16,52 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import React from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Data Siswa',
-        href: studentsRoutes.index().url,
+        href: '/students',
     },
 ];
 
-export default function Index({ students, filters, classes }) { // Receive filters & classes
-    const { flash, auth } = usePage<any>().props; // Get flash messages and auth
+interface Student {
+    id: number;
+    nis: string;
+    nama: string;
+    kelas: string;
+}
+
+interface PaginationLinks {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface PageProps {
+    students: {
+        data: Student[];
+        links: PaginationLinks[];
+    };
+    filters: {
+        search?: string;
+        kelas?: string;
+    };
+    classes: string[];
+}
+
+export default function Index({ students, filters, classes }: PageProps) {
+    const { flash, auth } = usePage<any>().props;
     const userRole = auth?.user?.role;
     const [search, setSearch] = useState(filters.search || '');
     const [kelas, setKelas] = useState(filters.kelas || '');
 
-    // Debounce search to avoid too many requests
+    // Debounce search
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (search !== (filters.search || '')) {
                 router.get(
-                    studentsRoutes.index().url,
+                    '/students',
                     { search, kelas },
                     { preserveState: true, replace: true }
                 );
@@ -45,16 +71,16 @@ export default function Index({ students, filters, classes }) { // Receive filte
         return () => clearTimeout(delayDebounceFn);
     }, [search]);
 
-    // Handle class filter change immediately
-    const handleClassChange = (e) => {
+    const handleClassChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newKelas = e.target.value;
         setKelas(newKelas);
         router.get(
-            studentsRoutes.index().url,
+            '/students',
             { search, kelas: newKelas },
             { preserveState: true, replace: true }
         );
     };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Data Siswa" />
@@ -95,7 +121,13 @@ export default function Index({ students, filters, classes }) { // Receive filte
                                     <>
                                         <ImportModal />
                                         <Link
-                                            href={studentsRoutes.create().url}
+                                            href="/students/promotion"
+                                            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                        >
+                                            Kenaikan Kelas
+                                        </Link>
+                                        <Link
+                                            href="/students/create"
                                             className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded"
                                         >
                                             + Tambah Data Siswa
@@ -155,7 +187,7 @@ export default function Index({ students, filters, classes }) { // Receive filte
 
                                     {students.data.length === 0 && (
                                         <tr>
-                                            <td colSpan="5" className="text-center py-4 text-muted-foreground">
+                                            <td colSpan={5} className="text-center py-4 text-muted-foreground">
                                                 Belum ada data siswa.
                                             </td>
                                         </tr>

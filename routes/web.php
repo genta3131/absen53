@@ -30,6 +30,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
             Route::post('/students/import', [StudentController::class, 'import'])->name('students.import');
             Route::get('/students/import/template', [StudentController::class, 'downloadTemplate'])->name('students.import.template');
+
+            // Grade Promotion
+            Route::get('/students/promotion', [\App\Http\Controllers\GradePromotionController::class, 'create'])->name('students.promotion');
+            Route::post('/students/promotion', [\App\Http\Controllers\GradePromotionController::class, 'store'])->name('students.promotion.store');
         });
         
         // Input Presensi
