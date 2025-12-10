@@ -38,7 +38,7 @@ class DashboardController extends Controller
         // 3. DATA BARU: Top 5 Kelas Sering Terlambat Bulan Ini
         // Kita perlu join tabel attendances dengan students untuk tahu kelasnya
         $topLateClasses = \Illuminate\Support\Facades\DB::table('attendances')
-            ->join('students', 'attendances.student_id', '=', 'students.id')
+            ->join('students', 'attendances.student_nis', '=', 'students.nis')
             ->select('students.kelas', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->where('attendances.status', 'Terlambat')
             ->whereBetween('attendances.tanggal', [$startOfMonth, $endOfMonth])

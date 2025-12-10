@@ -13,7 +13,7 @@ export default function Edit({ auth, student }: { auth: any, student: any }) {
         e.preventDefault();
         // Gunakan method PUT untuk update
         // Using hardcoded URL as fallback if route() helper is not available/configured correctly
-        put(`/students/${student.id}`);
+        put(`/students/${student.nis}`);
     };
 
     return (
@@ -25,7 +25,7 @@ export default function Edit({ auth, student }: { auth: any, student: any }) {
                 },
                 {
                     title: 'Edit Siswa',
-                    href: `/students/${student.id}/edit`,
+                    href: `/students/${student.nis}/edit`,
                 },
             ]}
         >

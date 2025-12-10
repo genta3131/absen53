@@ -90,8 +90,8 @@ class StudentController extends Controller
     {
         // Validasi
         $validated = $request->validate([
-            // Rule unique sedikit beda: NIS boleh sama asalkan milik siswa ini sendiri (ignore id)
-            'nis' => 'required|numeric|unique:students,nis,' . $student->id,
+            // Rule unique: NIS boleh sama asalkan milik siswa ini sendiri (ignore nis)
+            'nis' => 'required|numeric|unique:students,nis,' . $student->nis . ',nis',
             'nama' => 'required|string|max:255',
             'kelas' => ['required', 'string', 'max:10', function ($attribute, $value, $fail) {
                 // Validasi format kelas: X-1 s/d X-7, XI-1 s/d XI-7, XII-1 s/d XII-7

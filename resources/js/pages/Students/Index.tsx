@@ -150,7 +150,7 @@ export default function Index({ students, filters, classes }: PageProps) {
                                 </thead>
                                 <tbody>
                                     {students.data.map((student, index) => (
-                                        <tr key={student.id} className="hover:bg-muted/50">
+                                        <tr key={student.nis} className="hover:bg-muted/50">
                                             <td className="border border-border px-4 py-2 text-center text-foreground">{index + 1}</td>
                                             <td className="border border-border px-4 py-2 text-foreground">{student.nis}</td>
                                             <td className="border border-border px-4 py-2 text-foreground">{student.nama}</td>
@@ -161,7 +161,7 @@ export default function Index({ students, filters, classes }: PageProps) {
                                                     <>
                                                         {/* TOMBOL EDIT */}
                                                         <Link
-                                                            href={`/students/${student.id}/edit`}
+                                                            href={`/students/${student.nis}/edit`}
                                                             className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-sm mr-2"
                                                         >
                                                             Edit
@@ -171,7 +171,7 @@ export default function Index({ students, filters, classes }: PageProps) {
                                                         <button
                                                             onClick={() => {
                                                                 if (confirm('Yakin ingin menghapus siswa ini? Data presensinya juga akan hilang.')) {
-                                                                    router.delete(`/students/${student.id}`);
+                                                                    router.delete(`/students/${student.nis}`);
                                                                 }
                                                             }}
                                                             className="bg-destructive hover:bg-destructive/90 text-white font-bold py-1 px-3 rounded text-sm"

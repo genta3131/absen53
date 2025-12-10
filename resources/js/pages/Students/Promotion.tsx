@@ -42,10 +42,10 @@ export default function Promotion({ classes, students, filters }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         source_class: filters.source_class || '',
         destination_class: '',
-        student_ids: [] as number[],
+        student_nises: [] as string[],
     });
 
-    const [selectedStudents, setSelectedStudents] = useState<number[]>([]);
+    const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
     // Generate possible classes
     const possibleClasses: string[] = [];
@@ -72,23 +72,23 @@ export default function Promotion({ classes, students, filters }: Props) {
 
     // Update form data regarding student IDs when selection changes
     useEffect(() => {
-        setData('student_ids', selectedStudents);
+        setData('student_nises', selectedStudents);
     }, [selectedStudents]);
 
 
     const toggleSelectAll = (checked: boolean | string) => {
         if (checked === true) {
-            setSelectedStudents(students.map(s => s.id));
+            setSelectedStudents(students.map(s => s.nis));
         } else {
             setSelectedStudents([]);
         }
     };
 
-    const toggleStudent = (id: number) => {
-        if (selectedStudents.includes(id)) {
-            setSelectedStudents(selectedStudents.filter(sId => sId !== id));
+    const toggleStudent = (nis: string) => {
+        if (selectedStudents.includes(nis)) {
+            setSelectedStudents(selectedStudents.filter(sId => sId !== nis));
         } else {
-            setSelectedStudents([...selectedStudents, id]);
+            setSelectedStudents([...selectedStudents, nis]);
         }
     };
 
@@ -168,13 +168,13 @@ export default function Promotion({ classes, students, filters }: Props) {
 
                                         <div className="max-h-96 overflow-y-auto space-y-2">
                                             {students.map(student => (
-                                                <div key={student.id} className="flex items-center space-x-2 p-2 hover:bg-muted rounded border border-transparent hover:border-border">
+                                                <div key={student.nis} className="flex items-center space-x-2 p-2 hover:bg-muted rounded border border-transparent hover:border-border">
                                                     <Checkbox 
-                                                        id={`student-${student.id}`} 
-                                                        checked={selectedStudents.includes(student.id)}
-                                                        onCheckedChange={() => toggleStudent(student.id)}
+                                                        id={`student-${student.nis}`} 
+                                                        checked={selectedStudents.includes(student.nis)}
+                                                        onCheckedChange={() => toggleStudent(student.nis)}
                                                     />
-                                                    <Label htmlFor={`student-${student.id}`} className="cursor-pointer flex-grow">
+                                                    <Label htmlFor={`student-${student.nis}`} className="cursor-pointer flex-grow">
                                                         <span className="font-medium">{student.nama}</span>
                                                         <span className="text-muted-foreground ml-2 text-sm">({student.nis})</span>
                                                     </Label>
@@ -184,7 +184,7 @@ export default function Promotion({ classes, students, filters }: Props) {
                                                 <p className="text-muted-foreground text-center py-4">Tidak ada siswa di kelas ini.</p>
                                             )}
                                         </div>
-                                        {errors.student_ids && <p className="text-red-500 text-sm mt-2">{errors.student_ids}</p>}
+                                        {errors.student_nises && <p className="text-red-500 text-sm mt-2">{errors.student_nises}</p>}
                                     </div>
                                 )}
 

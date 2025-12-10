@@ -49,7 +49,7 @@ class AttendanceController extends Controller
         $request->validate([
             'date' => 'required|date|before_or_equal:today',
             'attendances' => 'required|array',
-            'attendances.*.student_id' => 'required|exists:students,id',
+            'attendances.*.student_nis' => 'required|exists:students,nis',
             'attendances.*.status' => 'required|in:Hadir,Sakit,Izin,Alpa,Terlambat',
             'attendances.*.keterangan' => 'nullable|string',
             'attendances.*.waktu_masuk' => 'nullable',
@@ -62,7 +62,7 @@ class AttendanceController extends Controller
             // Gunakan updateOrCreate agar tidak duplikat di hari yang sama
             Attendance::updateOrCreate(
                 [
-                    'student_id' => $data['student_id'],
+                    'student_nis' => $data['student_nis'],
                     'tanggal' => $date,
                 ],
                 [

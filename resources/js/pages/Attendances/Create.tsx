@@ -3,7 +3,8 @@ import { Head, useForm, router } from '@inertiajs/react';
 import { FormEventHandler, useState, useEffect } from 'react';
 
 interface AttendanceItem {
-    student_id: number;
+    student_nis: string;
+    student_name?: string; // Optional helper
     status: string;
     keterangan: string;
     waktu_masuk: string;
@@ -25,8 +26,7 @@ export default function Create({ auth, classes, students, selectedClass, selecte
     useEffect(() => {
         if (students.length > 0) {
             const initialData = students.map(student => ({
-                student_id: student.id,
-                // Jika ada data presensi hari ini, gunakan. Jika tidak, default Hadir.
+                student_nis: student.nis,
                 status: student.today_attendance ? student.today_attendance.status : 'Hadir',
                 keterangan: student.today_attendance ? (student.today_attendance.keterangan || '') : '',
                 waktu_masuk: student.today_attendance ? (student.today_attendance.waktu_masuk || '') : ''
@@ -120,7 +120,7 @@ export default function Create({ auth, classes, students, selectedClass, selecte
                                         </thead>
                                         <tbody>
                                             {students.map((student, index) => (
-                                                <tr key={student.id} className="hover:bg-muted/50">
+                                                <tr key={student.nis} className="hover:bg-muted/50">
                                                     <td className="border border-border px-4 py-2 text-center text-foreground">{index + 1}</td>
                                                     <td className="border border-border px-4 py-2">
                                                         <div className="font-bold text-foreground">{student.nama}</div>

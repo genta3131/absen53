@@ -9,6 +9,10 @@ class Student extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'nis';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     /**
      * Mass assignable columns.
      *

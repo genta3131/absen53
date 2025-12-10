@@ -50,13 +50,13 @@ class GradePromotionController extends Controller
                     $fail("Kelas tujuan tidak valid.");
                 }
             }],
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'exists:students,id',
+            'student_nises' => 'required|array',
+            'student_nises.*' => 'exists:students,nis',
         ]);
 
         try {
             DB::transaction(function () use ($request) {
-                Student::whereIn('id', $request->student_ids)
+                Student::whereIn('nis', $request->student_nises)
                     ->update(['kelas' => $request->destination_class]);
             });
 
