@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Head, useForm } from '@inertiajs/react'; // Kept useForm from inertia, removed Link if not used directly or kept if needed. Link IS used in TextLink? No TextLink wraps Link? TextLink imports Link? TextLink href expects string. 
 import AppLogoIcon from '@/components/app-logo-icon';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useEffect } from 'react';
 
 interface LoginProps {
     status?: string;
@@ -26,8 +26,23 @@ export default function Login({
         remember: false,
     });
 
+    useEffect(() => {
+        const rememberedEmail = localStorage.getItem('remembered_email');
+        if (rememberedEmail) {
+            setData('email', rememberedEmail);
+            setData('remember', true);
+        }
+    }, []);
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+        
+        if (data.remember) {
+            localStorage.setItem('remembered_email', data.email);
+        } else {
+            localStorage.removeItem('remembered_email');
+        }
+
         post('/login', {
             onFinish: () => reset('password'),
         });
@@ -156,7 +171,7 @@ export default function Login({
                                 tabIndex={3}
                                 className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                                 checked={data.remember}
-                                onCheckedChange={(checked) => setData('remember', checked)}
+                                onCheckedChange={(checked) => setData('remember', checked === true)}
                             />
                             <Label htmlFor="remember" className="ml-2 text-slate-600 dark:text-slate-400 font-normal cursor-pointer">
                                 Ingat saya

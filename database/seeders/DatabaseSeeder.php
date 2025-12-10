@@ -19,10 +19,10 @@ class DatabaseSeeder extends Seeder
 
         // Student seed data
         $students = [
-            ['nis' => '1512622026', 'nama' => 'Genta Abdi Fathir', 'kelas' => 'XII-RPL'],
-            ['nis' => '1512622038', 'nama' => 'Frasetia Adi Kusuma', 'kelas' => 'XII-RPL'],
-            ['nis' => '1512622006', 'nama' => 'Muhammad Ramdany', 'kelas' => 'XII-TKJ'],
-            ['nis' => '1512622041', 'nama' => 'Puja Putri Maisyaroh', 'kelas' => 'XII-TKJ'],
+            ['nis' => '1512622026', 'nama' => 'Genta Abdi Fathir', 'kelas' => 'X-1'],
+            ['nis' => '1512622038', 'nama' => 'Frasetia Adi Kusuma', 'kelas' => 'X-1'],
+            ['nis' => '1512622006', 'nama' => 'Muhammad Ramdany', 'kelas' => 'X-1'],
+            ['nis' => '1512622041', 'nama' => 'Puja Putri Maisyaroh', 'kelas' => 'X-1'],
         ];
 
         foreach ($students as $student) {
